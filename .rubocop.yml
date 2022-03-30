@@ -1,0 +1,8 @@
+AllCops:
+  SuggestExtensions: false
+  Exclude:
+    - 'app/helpers/application_helper.rb'
+    - 'bin/setup'
+    - 'bin/update'
+    - 'config/application.rb'
+    - 'app/models/application_record.rb'
