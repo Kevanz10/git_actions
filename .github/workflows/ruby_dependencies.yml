@@ -1,7 +1,6 @@
 on: [push]
 jobs:
-  workflow_call:
-    ruby_dependencies:
+  ruby_dependencies:
     name: Ruby and dependencies
     runs-on: ubuntu-latest
     steps:
