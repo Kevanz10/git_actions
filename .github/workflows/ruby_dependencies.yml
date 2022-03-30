@@ -1,0 +1,20 @@
+on:
+  workflow_call:
+    ruby_dependencies:
+    name: Ruby and dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.8
+      - name: Ruby gem cache
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: gems-
+      - name: Install gems
+        run: bundle install --jobs 4 --retry 2

@@ -45,15 +45,6 @@ jobs:
     name: Run Rubocop
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-      - name: Install dependencies
-        run: |
-          gem install bundler
-          bundler install
+        uses:  ./.github/workflows/ruby_dependencies
       - name: Run Rubocop
         run: rubocop
