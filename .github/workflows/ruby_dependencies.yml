@@ -1,4 +1,4 @@
-on:
+jobs:
   workflow_call:
     ruby_dependencies:
     name: Ruby and dependencies
