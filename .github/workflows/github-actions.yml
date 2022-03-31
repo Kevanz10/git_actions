@@ -1,21 +1,47 @@
-name: Example install of Ruby 2.6.5 (cached)
-
-on: push
-
+name: Continuous integration
+on: [push]
+env:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: postgres
 jobs:
-  build:
+  rspec:
+    name: Run RSpec
     runs-on: ubuntu-latest
-
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/cache@preview
-      id: cache
-      with:
-        path: ~/local/rubies
-        key: ruby-2.6.5
-    - uses: clupprich/ruby-build-action@master
-      id: ruby
-      with:
-        cache-available: ${{ steps.cache.outputs.cache-hit == 'true' }}
-    - name: Print version
-      run: ${{ steps.ruby.outputs.ruby-path }} --version
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - name: Install postgres client
+        run: sudo apt-get install libpq-dev
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundler install
+      - name: Create database
+        run: |
+          bundler exec rails db:create RAILS_ENV=test
+          bundler exec rails db:migrate RAILS_ENV=test
+      - name: Run tests
+        run: bundler exec rspec
+      - name: Upload coverage results    
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage
+      - name: Run Rubocop
+        run: rubocop
+      - name: Brakeman
+        run: brakeman
