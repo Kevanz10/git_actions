@@ -1,15 +1,21 @@
-name: Build
-on: [push]
+name: Example install of Ruby 2.6.5 (cached)
+
+on: push
 
 jobs:
-  rspec:
-    steps:
-      - name: Test
-        run: bundle exec rspec -f j -o tmp/rspec_results.json -f p
+  build:
+    runs-on: ubuntu-latest
 
-      - name: RSpec Report
-        uses: SonicGarden/rspec-report-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          json-path: tmp/rspec_results.json
-        if: always()
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/cache@preview
+      id: cache
+      with:
+        path: ~/local/rubies
+        key: ruby-2.6.5
+    - uses: clupprich/ruby-build-action@master
+      id: ruby
+      with:
+        cache-available: ${{ steps.cache.outputs.cache-hit == 'true' }}
+    - name: Print version
+      run: ${{ steps.ruby.outputs.ruby-path }} --version
