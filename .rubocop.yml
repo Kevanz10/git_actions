@@ -6,4 +6,4 @@ AllCops:
     - 'bin/update'
     - 'config/application.rb'
     - 'app/models/application_record.rb'
-    - 'db/schema'
+    - 'db/schema.rb'

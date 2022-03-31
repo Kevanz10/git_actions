@@ -26,15 +26,13 @@ jobs:
       - name: Install postgres client
         run: sudo apt-get install libpq-dev
       - name: Install dependencies
-        run: |
-          gem install bundler
-          bundler install
+        run: bundle install
       - name: Create database
         run: |
-          bundler exec rails db:create RAILS_ENV=test
-          bundler exec rails db:migrate RAILS_ENV=test
+          rails db:create RAILS_ENV=test
+          rails db:migrate RAILS_ENV=test
       - name: Run tests
-        run: bundler exec rspec
+        run: rspec
       - name: Upload coverage results    
         uses: actions/upload-artifact@master
         if: always()
@@ -42,6 +40,6 @@ jobs:
           name: coverage-report
           path: coverage
       - name: Run Rubocop
-        run: rubocop auto-correctable
+        run: rubocop
       - name: Brakeman
         run: brakeman
